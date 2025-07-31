@@ -39,7 +39,7 @@ public class LandingPage extends AppCompatActivity {
         });
 
         // Get user role from intent
-        isAdmin = getIntent().getBooleanExtra("isAdmin", true);
+        isAdmin = getIntent().getBooleanExtra("isAdmin", false);
 
         // Initialize RecyclerView
         RecyclerView announcementsRecyclerView = findViewById(R.id.announcementsRecyclerView);
