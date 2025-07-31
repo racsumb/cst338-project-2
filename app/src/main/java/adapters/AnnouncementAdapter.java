@@ -51,18 +51,19 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         holder.dateTextView.setText(announcement.getFormattedDate());
 
         // Show delete button only for admin
-        holder.deleteButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        if (holder.deleteButton != null) {
+            holder.deleteButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+            holder.deleteButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onDeleteClick(announcement);
+                }
+            });
+        }
 
         // Set click listeners
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(announcement);
-            }
-        });
-
-        holder.deleteButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onDeleteClick(announcement);
             }
         });
     }
