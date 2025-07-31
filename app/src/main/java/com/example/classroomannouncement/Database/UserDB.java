@@ -16,7 +16,7 @@ import com.example.classroomannouncement.Database.Entities.User;
         entities = {User.class}, // list all tables we want, right now only User
         version = 1              // start at version 1 for the first database version
 )
-public abstract class AppDB extends RoomDatabase {
+public abstract class UserDB extends RoomDatabase {
 
     /**
      * This is how we get access to the UserDAO (the list of commands for the User table).
