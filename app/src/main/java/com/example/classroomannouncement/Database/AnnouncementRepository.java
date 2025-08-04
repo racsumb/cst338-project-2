@@ -1,10 +1,9 @@
-package com.example.classroomannouncement.repositories;
+package com.example.classroomannouncement.Database;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
-import com.example.classroomannouncement.database.AppDatabase;
-import com.example.classroomannouncement.database.daos.AnnouncementDao;
-import com.example.classroomannouncement.database.entities.Announcement;
+
+import com.example.classroomannouncement.Database.Entities.Announcement;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

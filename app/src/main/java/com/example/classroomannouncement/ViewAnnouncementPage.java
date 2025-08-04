@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.classroomannouncement.database.entities.Announcement;
+import com.example.classroomannouncement.Database.Entities.Announcement;
 import com.example.classroomannouncement.viewmodels.AnnouncementViewModel;
 
 public class ViewAnnouncementPage extends AppCompatActivity {

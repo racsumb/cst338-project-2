@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.classroomannouncement.R;
-import com.example.classroomannouncement.database.entities.Announcement;
+import com.example.classroomannouncement.Database.Entities.Announcement;
 import java.util.List;
 
 public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.AnnouncementViewHolder> {

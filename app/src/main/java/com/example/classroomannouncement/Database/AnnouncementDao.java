@@ -1,11 +1,11 @@
-package com.example.classroomannouncement.database.daos;
+package com.example.classroomannouncement.Database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import com.example.classroomannouncement.database.entities.Announcement;
+import com.example.classroomannouncement.Database.Entities.Announcement;
 import java.util.List;
 
 @Dao

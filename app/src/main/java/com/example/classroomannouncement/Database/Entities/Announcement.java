@@ -1,9 +1,9 @@
-package com.example.classroomannouncement.database.entities;
+package com.example.classroomannouncement.Database.Entities;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
-import com.example.classroomannouncement.database.Converters;
+import com.example.classroomannouncement.Database.Converters;
 import java.util.Date;
 
 @Entity(tableName = "announcements")

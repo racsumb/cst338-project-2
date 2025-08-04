@@ -12,10 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.classroomannouncement.database.entities.Announcement;
-import com.example.classroomannouncement.repositories.AnnouncementRepository;
-
-import java.util.Date;
+import com.example.classroomannouncement.Database.Entities.Announcement;
+import com.example.classroomannouncement.Database.AnnouncementRepository;
 
 public class CreateAnnouncementPage extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.classroomannouncement.database;
+package com.example.classroomannouncement.Database;
 
 import androidx.room.TypeConverter;
 import java.util.Date;

@@ -1,12 +1,12 @@
-package com.example.classroomannouncement.database;
+package com.example.classroomannouncement.Database;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import android.content.Context;
-import com.example.classroomannouncement.database.daos.AnnouncementDao;
-import com.example.classroomannouncement.database.entities.Announcement;
+
+import com.example.classroomannouncement.Database.Entities.Announcement;
 
 @Database(
         entities = {Announcement.class},
