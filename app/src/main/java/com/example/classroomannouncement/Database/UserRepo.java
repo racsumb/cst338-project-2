@@ -25,6 +25,7 @@ public class UserRepo {
      *
      * We give it the app context (from an Activity),
      * and it builds a database and gets the UserDAO.
+     * It also creates a default admin user if one doesn't exist yet.
      */
     public UserRepo(Context context) {
         // Build the database (creates or opens "classroom_database")
@@ -33,11 +34,20 @@ public class UserRepo {
                         UserDB.class,
                         "classroom_database" // name of the database file
                 )
-                .allowMainThreadQueries() // run queries on main thread (simpler for now)
+                .fallbackToDestructiveMigration() // if database version is wrong, reset it (for dev only!)
+                .allowMainThreadQueries()         // run queries on main thread (easier for now)
                 .build();
 
         // Get the DAO from the database
         userDAO = db.userDao();
+
+        // Automatically add a default admin account if not already in the database
+        // Email: admin@example.com | Password: admin123
+        User existingAdmin = userDAO.getUserByEmail("admin@example.com");
+        if (existingAdmin == null) {
+            User adminUser = new User("Admin", "admin@example.com", "admin123", true);
+            userDAO.insert(adminUser);
+        }
     }
 
     /**
