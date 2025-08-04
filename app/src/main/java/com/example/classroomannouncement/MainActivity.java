@@ -40,55 +40,74 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Make sure the screen adjusts for system bars
+        // Makes the screen adjust for the top/bottom bars on newer devices
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Connect screen elements to code
+        // Connect the screen inputs to code
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         goToSignupLink = findViewById(R.id.goToSignupLink);
 
-        // Make a new UserRepo so we can check users in the database
+        // Set up the helper to talk to the database
         userRepo = new UserRepo(this);
 
         /**
          * When Login button is clicked:
-         * 1. Get email and password typed by the user
-         * 2. If boxes are empty, show a message
-         * 3. Ask the database if a user with that email & password exists
-         * 4. If found, show success and go to LandingPage
-         * 5. If not found, show "Invalid email or password"
+         * 1. Get the typed email and password
+         * 2. Check if either is empty
+         * 3. Ask the database if a user exists
+         * 4. If found, go to the correct screen (admin or student)
+         * 5. If not found, show error
          */
         loginButton.setOnClickListener(v -> {
+            // Step 1: Get email and password from input boxes
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
 
-            // Check for empty input
+            // Step 2: Make sure user filled both boxes
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
-            } else {
-                // Ask the database if there is a user with these credentials
-                User user = userRepo.loginUser(email, password);
+                return;
+            }
 
-                if (user != null) {
-                    // Login success
-                    Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(MainActivity.this, LandingPage.class));
+            // Step 3: Ask the database if this user exists
+            User user = userRepo.loginUser(email, password);
+
+            if (user != null) {
+                // Step 4: Login worked
+                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+
+                Intent intent;
+
+                if (user.isAdmin) {
+                    // Admins go to LandingPage
+                    intent = new Intent(MainActivity.this, LandingPage.class);
+                    intent.putExtra("isAdmin", true);
+                    intent.putExtra("roleLabel", "Admin");
                 } else {
-                    // No matching user
-                    Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+                    // Regular users go to StudentHomePage
+                    intent = new Intent(MainActivity.this, StudentHomePage.class);
+                    intent.putExtra("isAdmin", false);
+                    intent.putExtra("roleLabel", "Student");
                 }
+
+                // Step 5: Start the new screen
+                startActivity(intent);
+
+            } else {
+                // Step 6: Login failed
+                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
             }
         });
 
         /**
-         * When "Don't have an account? Sign Up" text is clicked:
-         * Open the SignupPage screen.
+         * If user clicks the sign-up text:
+         * Take them to the Signup screen.
          */
         goToSignupLink.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, SignupPage.class));
