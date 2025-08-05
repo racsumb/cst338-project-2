@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.classroomannouncement.Database.UserRepo;
 import com.example.classroomannouncement.Database.Entities.User;
 
+import java.util.concurrent.Future;
 /**
  * This is the Login screen.
  * Users type email and password to log in.
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
          * When Login button is clicked:
          * 1. Get the typed email and password
          * 2. Check if either is empty
-         * 3. Ask the database if a user exists
+         * 3. Ask the database if a user exists (now happens in the background)
          * 4. If found, go to the correct screen (admin or student)
          * 5. If not found, show error
          */
@@ -68,40 +69,43 @@ public class MainActivity extends AppCompatActivity {
             // Step 1: Get email and password from input boxes
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
-
             // Step 2: Make sure user filled both boxes
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // Step 3: Ask the database if this user exists. This returns a Future.
+            Future<User> futureUser = userRepo.loginUser(email, password);
+            try {
+                // .get() waits for the background task to finish and returns the User
+                User user = futureUser.get();
 
-            // Step 3: Ask the database if this user exists
-            User user = userRepo.loginUser(email, password);
+                if (user != null) {
+                    // Step 4: Login worked
+                    Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-            if (user != null) {
-                // Step 4: Login worked
-                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Intent intent;
 
-                Intent intent;
+                    if (user.isAdmin) {
+                        // Admins go to LandingPage
+                        intent = new Intent(MainActivity.this, LandingPage.class);
+                        intent.putExtra("isAdmin", true);
+                    } else {
+                        // Regular users go to StudentHomePage
+                        intent = new Intent(MainActivity.this, LandingPage.class);
+                        intent.putExtra("isAdmin", false);
+                    }
+                    startActivity(intent);
+                    finish(); // Close the login screen
 
-                if (user.isAdmin) {
-                    // Admins go to LandingPage
-                    intent = new Intent(MainActivity.this, LandingPage.class);
-                    intent.putExtra("isAdmin", true);
-                    intent.putExtra("roleLabel", "Admin");
                 } else {
-                    // Regular users go to StudentHomePage
-                    intent = new Intent(MainActivity.this, StudentHomePage.class);
-                    intent.putExtra("isAdmin", false);
-                    intent.putExtra("roleLabel", "Student");
+                    // Step 5: Login failed
+                    Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
                 }
-
-                // Step 5: Start the new screen
-                startActivity(intent);
-
-            } else {
-                // Step 6: Login failed
-                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                // This catches errors if the background task fails
+                Toast.makeText(this, "An issue occurred", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         });
 

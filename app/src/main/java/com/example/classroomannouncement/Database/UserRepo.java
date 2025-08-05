@@ -1,10 +1,10 @@
 package com.example.classroomannouncement.Database;
 
 import android.content.Context;
-
-import androidx.room.Room;
-
 import com.example.classroomannouncement.Database.Entities.User;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * This class is a helper that talks to the Room database.
@@ -13,12 +13,9 @@ import com.example.classroomannouncement.Database.Entities.User;
  * It makes our code simpler and cleaner.
  */
 public class UserRepo {
-
-    // This is the database object
-    private UserDB db;
-
-    // This is how we run commands for the "users" table
-    private UserDAO userDAO;
+    // define the userDAO
+    private final UserDAO userDAO;
+    private final ExecutorService executorService;
 
     /**
      * Constructor for UserRepo.
@@ -28,49 +25,43 @@ public class UserRepo {
      * It also creates a default admin user if one doesn't exist yet.
      */
     public UserRepo(Context context) {
-        // Build the database (creates or opens "classroom_database")
-        db = Room.databaseBuilder(
-                        context.getApplicationContext(),
-                        UserDB.class,
-                        "classroom_database" // name of the database file
-                )
-                .fallbackToDestructiveMigration() // if database version is wrong, reset it (for dev only!)
-                .allowMainThreadQueries()         // run queries on main thread (easier for now)
-                .build();
-
-        // Get the DAO from the database
-        userDAO = db.userDao();
-
-        // Automatically add a default admin account if not already in the database
-        // Email: admin@example.com | Password: admin123
-        User existingAdmin = userDAO.getUserByEmail("admin@example.com");
-        if (existingAdmin == null) {
-            User adminUser = new User("Admin", "admin@example.com", "admin123", true);
-            userDAO.insert(adminUser);
-        }
+        // get singleton instance of the main database
+        AppDatabase db = AppDatabase.getDatabase(context.getApplicationContext());
+        this.userDAO = db.userDao();
+        this.executorService = Executors.newSingleThreadExecutor();
+        // add default admin user on a background thread
+        executorService.execute(() -> {
+            User existingAdmin = userDAO.getUserByEmail("admin@example.com");
+            if (existingAdmin == null) {
+                User adminUser = new User("Admin", "admin@example.com", "admin123", true);
+                userDAO.insert(adminUser);
+            }
+        });
     }
 
     /**
      * Save a new user into the database.
      */
     public void registerUser(User user) {
-        userDAO.insert(user);
+        executorService.execute(() -> userDAO.insert(user));
     }
 
     /**
      * Find a user that matches email and password.
      * If found, returns that User. If not, returns null.
+     * Uses Future for async operations.
      */
-    public User loginUser(String email, String password) {
-        return userDAO.getUser(email, password);
+    public Future<User> loginUser(String email, String password) {
+        return executorService.submit(() -> userDAO.getUser(email, password));
     }
 
     /**
      * Find a user just by email.
      * If an account already exists with this email, we will get that User back.
      * If none, it returns null.
+     * Uses Future for async operations.
      */
-    public User getUserByEmail(String email) {
-        return userDAO.getUserByEmail(email);
+    public Future<User> getUserByEmail(String email) {
+        return executorService.submit(() -> userDAO.getUserByEmail(email));
     }
 }

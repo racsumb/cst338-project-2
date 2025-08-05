@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.classroomannouncement.Database.UserRepo;
 import com.example.classroomannouncement.Database.Entities.User;
 
+import java.util.concurrent.Future;
+
 /**
  * This is the Signup screen.
  * Users type their name, email, and password to create an account.
@@ -49,7 +51,7 @@ public class SignupPage extends AppCompatActivity {
          * When the Sign Up button is clicked:
          * 1. Get the name, email, and password typed by the user
          * 2. If any field is empty, show a message
-         * 3. Check if the email is already used
+         * 3. Check if the email is already used (now happens in the background)
          * 4. If email is new, create a user in the database and go back to Login
          */
         signupButton.setOnClickListener(v -> {
@@ -57,47 +59,45 @@ public class SignupPage extends AppCompatActivity {
             String name = fullNameEditText.getText().toString().trim();
             String email = signupEmailEditText.getText().toString().trim();
             String password = signupPasswordEditText.getText().toString().trim();
-
             // 1. Check if any box is empty
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                // Show a message on the screen
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-
-                // 2. Check if password is too short (less than 6 characters)
-            } else if (password.length() < 6) {
-                // Tell the user to make the password longer
+                return;
+            }
+            // 2. Check if password is too short
+            if (password.length() < 6) {
                 Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-
-            } else {
-                // 3. Check if the email already exists in the database
-                User existingUser = userRepo.getUserByEmail(email);
-
-                // If a user with this email is already found
+                return;
+            }
+            // 3. Check if the email already exists in the database
+            Future<User> futureUser = userRepo.getUserByEmail(email);
+            try {
+                User existingUser = futureUser.get(); // Waits for the background check to finish
                 if (existingUser != null) {
-                    // Show a message saying the email is already used
+                    // If a user with this email is already found
                     Toast.makeText(this, "Email already registered!", Toast.LENGTH_SHORT).show();
-
                 } else {
-                    // 4. If no user found, make a new user object with the info we typed
-                    User newUser = new User(name, email, password, false);
-
+                    // 4. If no user found, make a new user object
+                    User newUser = new User(name, email, password, false); // false for non-admin
                     // Save the new user into the database
                     userRepo.registerUser(newUser);
-
                     // Show a message that signup worked
                     Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show();
-
                     // Go back to the Login screen
                     startActivity(new Intent(SignupPage.this, MainActivity.class));
                 }
+            } catch (Exception e) {
+                Toast.makeText(this, "An issue occurred during signup", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         });
+
         /**
          * When "Already have an account? Login" text is clicked:
          * Just go back to the Login screen.
          */
         goToLoginLink.setOnClickListener(v -> {
-            startActivity(new Intent(SignupPage.this, MainActivity.class));
+            finish(); // Closes this screen and returns to the previous one (MainActivity)
         });
     }
 }
