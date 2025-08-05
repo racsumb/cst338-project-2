@@ -43,4 +43,8 @@ public interface UserDAO {
      */
     @Query("SELECT * FROM users")
     List<User> getAllUsers();
+
+    @androidx.room.Update
+    void update(User user);
+
 }
