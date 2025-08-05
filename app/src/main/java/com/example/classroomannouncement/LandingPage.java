@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.classroomannouncement.adapters.AnnouncementAdapter;
-import com.example.classroomannouncement.database.entities.Announcement;
+import com.example.classroomannouncement.Database.Entities.Announcement;
 import com.example.classroomannouncement.viewmodels.AnnouncementViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
