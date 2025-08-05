@@ -73,4 +73,9 @@ public class UserRepo {
     public User getUserByEmail(String email) {
         return userDAO.getUserByEmail(email);
     }
+
+    public void updateUser(User user) {
+        userDAO.update(user);
+    }
+
 }
