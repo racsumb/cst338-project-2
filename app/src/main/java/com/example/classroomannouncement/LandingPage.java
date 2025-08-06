@@ -2,9 +2,7 @@ package com.example.classroomannouncement;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
+import android.view.View; // <-- THIS is what you need
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -13,13 +11,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.classroomannouncement.adapters.AnnouncementAdapter;
 import com.example.classroomannouncement.Database.Entities.Announcement;
 import com.example.classroomannouncement.viewmodels.AnnouncementViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
+
 
 public class LandingPage extends AppCompatActivity {
 
@@ -68,23 +65,14 @@ public class LandingPage extends AppCompatActivity {
             }
         });
 
-        // Find buttons by their ID
-        Button goToSettingsButton = findViewById(R.id.goToSettingsButton);
+        // FAB for creating announcements
         FloatingActionButton createAnnouncementButton = findViewById(R.id.goToCreateAnnouncementButton);
-
-        // Set OnClickListener for the Settings button
-        goToSettingsButton.setOnClickListener(v -> {
-            Intent intent = new Intent(LandingPage.this, SettingsPage.class);
-            startActivity(intent);
-        });
-
-        // Set OnClickListener for the Create Announcement button
         createAnnouncementButton.setOnClickListener(v -> {
             Intent intent = new Intent(LandingPage.this, CreateAnnouncementPage.class);
             startActivity(intent);
         });
 
-        // Show create button only for admin
+        // Show FAB only for admin
         createAnnouncementButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
     }
 }
