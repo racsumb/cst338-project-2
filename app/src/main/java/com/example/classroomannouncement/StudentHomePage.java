@@ -2,6 +2,7 @@ package com.example.classroomannouncement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -13,49 +14,56 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.classroomannouncement.Database.Entities.Announcement;
 import com.example.classroomannouncement.adapters.AnnouncementAdapter;
 import com.example.classroomannouncement.viewmodels.AnnouncementViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class StudentHomePage extends AppCompatActivity {
 
-    // Constants for intent extras
     public static final String EXTRA_FULL_NAME = "fullName";
     public static final String EXTRA_ROLE = "roleLabel";
 
     private AnnouncementViewModel announcementViewModel;
     private AnnouncementAdapter announcementAdapter;
-    private TextView welcomeText, roleText;
+    private TextView welcomeText, roleText, quoteTextView;
+
+    private final String[] quotes = {
+            "The beautiful thing about learning is that no one can take it away from you. – B.B. King",
+            "Education is the passport to the future. – Malcolm X",
+            "An investment in knowledge pays the best interest. – Benjamin Franklin",
+            "Learning never exhausts the mind. – Leonardo da Vinci",
+            "The mind is not a vessel to be filled but a fire to be kindled. – Plutarch"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_home);
 
-        // Initialize views
         welcomeText = findViewById(R.id.studentWelcomeText);
         roleText = findViewById(R.id.roleText);
+        quoteTextView = findViewById(R.id.quoteTextView);
         RecyclerView announcementsRecyclerView = findViewById(R.id.announcementsRecyclerView);
         ImageButton settingsButton = findViewById(R.id.settingsButton);
         ImageButton editProfileButton = findViewById(R.id.editProfileButton);
+        FloatingActionButton refreshQuoteButton = findViewById(R.id.refreshQuoteButton);
 
-        // Get user data from intent with null checks
+        // Intent extras
         String fullName = getIntent().getStringExtra(EXTRA_FULL_NAME);
         String role = getIntent().getStringExtra(EXTRA_ROLE);
 
-        // Set default values if null
         if (fullName == null || fullName.isEmpty()) {
             fullName = getString(R.string.default_student_name);
         }
-
         if (role == null || role.isEmpty()) {
             role = getString(R.string.default_role);
         }
 
-        // Set welcome message with full name
         welcomeText.setText(getString(R.string.welcome_message, fullName));
         roleText.setText(getString(R.string.logged_in_as, role));
 
-        // Rest of your onCreate code remains the same...
+        // Settings button
         settingsButton.setOnClickListener(v -> {
             startActivity(new Intent(this, SettingsPage.class));
         });
@@ -64,6 +72,7 @@ public class StudentHomePage extends AppCompatActivity {
             startActivity(new Intent(this, EditProfilePage.class));
         });
 
+        // Announcements
         announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementAdapter = new AnnouncementAdapter(new ArrayList<>(), false);
         announcementsRecyclerView.setAdapter(announcementAdapter);
@@ -86,5 +95,27 @@ public class StudentHomePage extends AppCompatActivity {
                 // Not needed for student view
             }
         });
+
+        // Load initial quote
+        loadRandomQuote();
+
+        // Refresh quote with animation
+        refreshQuoteButton.setOnClickListener(v -> {
+            RotateAnimation rotate = new RotateAnimation(
+                    0, 360,
+                    RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                    RotateAnimation.RELATIVE_TO_SELF, 0.5f
+            );
+            rotate.setDuration(500);
+            refreshQuoteButton.startAnimation(rotate);
+
+            loadRandomQuote();
+        });
+    }
+
+    private void loadRandomQuote() {
+        Random random = new Random();
+        String quote = quotes[random.nextInt(quotes.length)];
+        quoteTextView.setText(quote);
     }
 }

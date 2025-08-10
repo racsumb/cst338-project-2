@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Header with profile and settings icons -->
+    <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -66,6 +66,18 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
+    <!-- Quote of the Day -->
+    <TextView
+        android:id="@+id/quoteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Loading quote..."
+        android:textSize="16sp"
+        android:textStyle="italic"
+        android:gravity="center_horizontal"
+        android:textColor="?android:attr/textColorPrimary"/>
+
     <!-- Announcements List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/announcementsRecyclerView"
@@ -74,4 +86,19 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingBottom="16dp"/>
+
+    <!-- FAB -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/refreshQuoteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="Refresh Quote" />
+    </RelativeLayout>
 </LinearLayout>
