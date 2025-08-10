@@ -72,6 +72,26 @@
                     android:textSize="16sp"
                     tools:text="This is the full text of the announcement. It can be multiple paragraphs long and will wrap as needed, providing all the necessary details for the students." />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="?android:attr/dividerHorizontal" />
+
+                <TextView
+                    android:id="@+id/inspirationalQuote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:lineSpacingExtra="5dp"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:visibility="gone"
+                    tools:text="&quot;This is where the quote will appear&quot;\n\n- quote provided by quotable.io, retrieved via retrofit"
+                    tools:visibility="visible" />
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </androidx.core.widget.NestedScrollView>
