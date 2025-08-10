@@ -2,8 +2,10 @@ package com.example.classroomannouncement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,13 +17,21 @@ import com.example.classroomannouncement.Database.Entities.Announcement;
 import com.example.classroomannouncement.viewmodels.AnnouncementViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.util.List;
+
 public class ViewAnnouncementPage extends AppCompatActivity {
 
     private AnnouncementViewModel announcementViewModel;
     private MaterialToolbar toolbar;
     private TextView announcementTitle, announcementContent, announcementDate;
+    private TextView inspirationalQuote;
     private int currentAnnouncementId;
     private boolean isAdmin;
+    private static final String TAG = "ViewAnnouncementPage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +63,7 @@ public class ViewAnnouncementPage extends AppCompatActivity {
         announcementTitle = findViewById(R.id.announcementTitle);
         announcementContent = findViewById(R.id.announcementContent);
         announcementDate = findViewById(R.id.announcementDate);
+        inspirationalQuote = findViewById(R.id.inspirationalQuote);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -65,6 +76,7 @@ public class ViewAnnouncementPage extends AppCompatActivity {
         announcementViewModel.getAnnouncementById(currentAnnouncementId).observe(this, announcement -> {
             if (announcement != null) {
                 displayAnnouncement(announcement);
+                fetchInspirationalQuote();
             } else {
                 showErrorAndFinish("Announcement not found");
             }
@@ -78,9 +90,47 @@ public class ViewAnnouncementPage extends AppCompatActivity {
         toolbar.setTitle(announcement.getTitle());
     }
 
+    private void fetchInspirationalQuote() {
+        // defensive null check in case quote is malformed or wrong
+        if (inspirationalQuote == null) {
+            return;
+        }
+
+        ZenQuoteApiService apiService = RetrofitClient.getClient().create(ZenQuoteApiService.class);
+        Call<List<ZenQuoteResponse>> call = apiService.getRandomQuote();
+
+        call.enqueue(new Callback<List<ZenQuoteResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ZenQuoteResponse>> call, @NonNull Response<List<ZenQuoteResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    // if the api call is successful we prepare the content
+                    ZenQuoteResponse quote = response.body().get(0);
+                    String quoteContent = quote.getQuoteText();
+                    String authorName = quote.getAuthor();
+
+                    String formattedQuote = "<i>\"" + quoteContent + " - " + authorName + "\"</i>" +
+                            "<br><br>- quote provided by zenquotes.io, retrieved via retrofit";
+
+                    inspirationalQuote.setText(Html.fromHtml(formattedQuote, Html.FROM_HTML_MODE_LEGACY));
+                    inspirationalQuote.setVisibility(View.VISIBLE);
+                } else {
+                    // if api call fails show a toast, proves we're at least trying to retrieve in case API is down :)
+                    Toast.makeText(ViewAnnouncementPage.this, "Retrieval from quote API failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ZenQuoteResponse>> call, @NonNull Throwable t) {
+                // network failure, show same toast
+                Toast.makeText(ViewAnnouncementPage.this, "Retrieval from quote API failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (isAdmin) {
+            // TODO add some kind of admin option if needed
             // Remove this if you don't have a menu resource
             // getMenuInflater().inflate(R.menu.menu_announcement, menu);
         }
