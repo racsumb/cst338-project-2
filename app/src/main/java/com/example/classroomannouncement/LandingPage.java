@@ -3,6 +3,8 @@ package com.example.classroomannouncement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -111,6 +113,16 @@ public class LandingPage extends AppCompatActivity {
         // FAB for refreshing quote
         FloatingActionButton refreshQuoteButton = findViewById(R.id.refreshQuoteButton);
         refreshQuoteButton.setOnClickListener(v -> fetchQuote());
+
+        // Settings Button
+        ImageButton settingsButton = findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LandingPage.this, SettingsPage.class);
+            intent.putExtra("isAdmin", isAdmin);
+            startActivity(intent);
+        });
+
+
     }
 
     private void fetchQuote() {

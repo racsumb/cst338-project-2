@@ -36,6 +36,11 @@ public class User {
      */
     public boolean isAdmin;
 
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+
     // Constructor
     public User(String fullName, String email, String password, boolean isAdmin) {
         this.fullName = fullName;
