@@ -24,10 +24,14 @@ public class EditProfilePage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_edit_profile); // Connect layout XML file
 
         Log.d("EditProfilePage", "onCreate called");
 
         String userEmail = getIntent().getStringExtra("userEmail");
+        Log.d("EditProfilePage", "Received email: " + userEmail);
+
         if (userEmail == null) {
             Log.e("EditProfilePage", "No user email provided");
             Toast.makeText(this, "Error: No user email provided", Toast.LENGTH_SHORT).show();
@@ -36,8 +40,7 @@ public class EditProfilePage extends AppCompatActivity {
         }
         Log.d("EditProfilePage", "Received email: " + userEmail);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile); // Connect layout XML file
+
 
         // Link input fields and button to layout components
         nameEditText = findViewById(R.id.nameEditText);

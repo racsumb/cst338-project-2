@@ -2,6 +2,7 @@ package com.example.classroomannouncement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -45,13 +46,17 @@ public class LandingPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_landing_page);
 
+        String currentUserEmail = getIntent().getStringExtra("userEmail");
+        Log.d("LandingPage", "Received email: " + currentUserEmail);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        String currentUserEmail = getIntent().getStringExtra("userEmail");
+
+
 
 
         // Get user role from intent
