@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.classroomannouncement.Database.UserRepo;
+import com.example.classroomannouncement.Database.Repo.UserRepo;
 import com.example.classroomannouncement.Database.Entities.User;
 
 public class SignupPage extends AppCompatActivity {

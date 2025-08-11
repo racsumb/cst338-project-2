@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.classroomannouncement.Database.UserRepo;
+import com.example.classroomannouncement.Database.Repo.UserRepo;
 import com.example.classroomannouncement.Database.Entities.User;
 
 /**
