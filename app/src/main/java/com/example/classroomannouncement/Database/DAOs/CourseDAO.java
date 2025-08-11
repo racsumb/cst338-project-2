@@ -44,4 +44,12 @@ public interface CourseDAO {
      */
     @Query("SELECT * FROM courses")
     List<Course> getAllCourses();
+
+    /**
+     * Retrieves a course by its name.
+     * @param courseName The name of the course to retrieve.
+     * @return The Course object if found, otherwise null.
+     */
+    @Query("SELECT * FROM courses WHERE courseName = :courseName LIMIT 1")
+    Course getCourseByName(String courseName);
 }

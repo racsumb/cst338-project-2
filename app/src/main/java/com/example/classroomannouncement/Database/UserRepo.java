@@ -6,6 +6,9 @@ import androidx.room.Room;
 
 import com.example.classroomannouncement.Database.Entities.User;
 import com.example.classroomannouncement.Database.DAOs.UserDAO;
+import com.example.classroomannouncement.Database.DAOs.CourseDAO;
+import com.example.classroomannouncement.Database.Entities.Course;
+
 
 /**
  * This class is a helper that talks to the Room database.
@@ -20,6 +23,9 @@ public class UserRepo {
 
     // This is how we run commands for the "users" table
     private UserDAO userDAO;
+
+    // This is how we run commands for the "courses" table
+    private CourseDAO courseDAO;
 
     /**
      * Constructor for UserRepo.
@@ -41,6 +47,7 @@ public class UserRepo {
 
         // Get the DAO from the database
         userDAO = db.userDao();
+        courseDAO = db.courseDAO();
 
         // Automatically add a default admin account if not already in the database
         // Email: admin@example.com | Password: admin123
@@ -48,6 +55,13 @@ public class UserRepo {
         if (existingAdmin == null) {
             User adminUser = new User("Admin", "admin@example.com", "admin123", true);
             userDAO.insert(adminUser);
+        }
+
+        // Automatically add a default "All Students" course if it's not already in the database
+        Course allStudentsCourse = courseDAO.getCourseByName("All Students");
+        if (allStudentsCourse == null) {
+            Course newCourse = new Course("All Students");
+            courseDAO.insert(newCourse);
         }
     }
 
