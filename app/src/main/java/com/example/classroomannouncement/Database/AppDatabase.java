@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import android.content.Context;
 
+import com.example.classroomannouncement.Database.DAOs.AnnouncementDao;
 import com.example.classroomannouncement.Database.Entities.Announcement;
 
 @Database(

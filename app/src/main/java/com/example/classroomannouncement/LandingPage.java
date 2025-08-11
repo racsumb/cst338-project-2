@@ -100,6 +100,14 @@ public class LandingPage extends AppCompatActivity {
         });
         createAnnouncementButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
 
+        // FAB for creating courses
+        FloatingActionButton createCourseButton = findViewById(R.id.goToCreateCourseButton);
+        createCourseButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LandingPage.this, CourseActivity.class);
+            startActivity(intent);
+        });
+        createCourseButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+
         // FAB for refreshing quote
         FloatingActionButton refreshQuoteButton = findViewById(R.id.refreshQuoteButton);
         refreshQuoteButton.setOnClickListener(v -> fetchQuote());
