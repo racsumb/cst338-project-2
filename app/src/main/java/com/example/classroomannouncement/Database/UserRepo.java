@@ -57,10 +57,10 @@ public class UserRepo {
             userDAO.insert(adminUser);
         }
 
-        // Automatically add a default "All Students" course if it's not already in the database
-        Course allStudentsCourse = courseDAO.getCourseByName("All Students");
+        // Automatically add a default "General" course if it's not already in the database
+        Course allStudentsCourse = courseDAO.getCourseByName("General");
         if (allStudentsCourse == null) {
-            Course newCourse = new Course("All Students");
+            Course newCourse = new Course("General");
             courseDAO.insert(newCourse);
         }
     }
