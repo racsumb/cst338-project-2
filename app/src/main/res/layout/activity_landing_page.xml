@@ -102,6 +102,16 @@
             android:contentDescription="Refresh Quote" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToCreateCourseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add"
+            android:contentDescription="Create Course"
+            android:visibility="visible"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToCreateAnnouncementButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

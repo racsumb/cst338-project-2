@@ -1,9 +1,12 @@
 package com.example.classroomannouncement.Database;
 
+import com.example.classroomannouncement.Database.DAOs.CourseDAO;
+import com.example.classroomannouncement.Database.DAOs.UserDAO;
+import com.example.classroomannouncement.Database.Entities.Course;
+import com.example.classroomannouncement.Database.Entities.User;
+
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
-
-import com.example.classroomannouncement.Database.Entities.User;
 
 /**
  * This class is like the main database file.
@@ -13,8 +16,9 @@ import com.example.classroomannouncement.Database.Entities.User;
  * 3. Other parts of our app will talk to the database through this class.
  */
 @Database(
-        entities = {User.class}, // list all tables we want, right now only User
-        version = 1              // start at version 1 for the first database version
+        // add both user and course class to entities list
+        entities = {User.class, Course.class},
+        version = 2
 )
 public abstract class UserDB extends RoomDatabase {
 
@@ -25,4 +29,12 @@ public abstract class UserDB extends RoomDatabase {
      * AppDatabase.database.userDao().insert(newUser)
      */
     public abstract UserDAO userDao();
+
+    /**
+     * This is how we get access to the CourseDAO (the list of commands for the Course table).
+     *
+     * Example:
+     * AppDatabase.database.courseDao().insert(newCourse)
+     */
+    public abstract CourseDAO courseDAO();
 }

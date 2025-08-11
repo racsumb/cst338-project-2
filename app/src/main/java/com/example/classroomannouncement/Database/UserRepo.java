@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.room.Room;
 
 import com.example.classroomannouncement.Database.Entities.User;
+import com.example.classroomannouncement.Database.DAOs.UserDAO;
 
 /**
  * This class is a helper that talks to the Room database.

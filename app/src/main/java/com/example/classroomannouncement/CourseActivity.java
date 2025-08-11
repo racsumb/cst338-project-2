@@ -12,18 +12,23 @@ import androidx.room.Room;
 
 import com.example.classroomannouncement.Database.UserDB;
 import com.example.classroomannouncement.Database.Entities.Course;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * This screen lets you add a new course and see all courses.
  */
 public class CourseActivity extends AppCompatActivity {
 
-    private EditText courseNameEditText; // Box for typing course name
-    private Button addCourseButton;      // Button to save the course
-    private ListView coursesListView;    // List to show all courses
-    private UserDB db;                   // Database connection
+    private EditText courseNameEditText;
+    private Button addCourseButton;
+    private ListView coursesListView;
+    private UserDB db;
+    private final ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +36,15 @@ public class CourseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_course);
 
         // Link UI elements to code
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         courseNameEditText = findViewById(R.id.courseNameEditText);
         addCourseButton = findViewById(R.id.addCourseButton);
         coursesListView = findViewById(R.id.coursesListView);
 
-        // Build the database
         db = Room.databaseBuilder(getApplicationContext(),
                         UserDB.class, "UserDB")
-                .allowMainThreadQueries() // Only for quick testing!
                 .fallbackToDestructiveMigration()
                 .build();
 
@@ -49,10 +55,14 @@ public class CourseActivity extends AppCompatActivity {
         addCourseButton.setOnClickListener(v -> {
             String name = courseNameEditText.getText().toString().trim();
             if (!name.isEmpty()) {
-                db.courseDao().insert(new Course(name)); // Save to DB
-                courseNameEditText.setText("");          // Clear input
-                Toast.makeText(this, "Course added!", Toast.LENGTH_SHORT).show();
-                loadCourses();                           // Refresh list
+                databaseWriteExecutor.execute(() -> {
+                    db.courseDAO().insert(new Course(name));
+                    runOnUiThread(() -> {
+                        courseNameEditText.setText("");
+                        Toast.makeText(CourseActivity.this, "Course added!", Toast.LENGTH_SHORT).show();
+                        loadCourses();
+                    });
+                });
             } else {
                 Toast.makeText(this, "Please enter a course name", Toast.LENGTH_SHORT).show();
             }
@@ -61,13 +71,20 @@ public class CourseActivity extends AppCompatActivity {
 
     // Load all courses from the DB and show in ListView
     private void loadCourses() {
-        List<Course> courses = db.courseDao().getAllCourses();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                // Convert Course objects to just their names
-                courses.stream().map(c -> c.courseName).toArray(String[]::new)
-        );
-        coursesListView.setAdapter(adapter);
+        databaseWriteExecutor.execute(() -> {
+            List<Course> courses = db.courseDAO().getAllCourses();
+            List<String> courseNames = courses.stream()
+                    .map(course -> course.courseName)
+                    .collect(Collectors.toList());
+
+            runOnUiThread(() -> {
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        courseNames
+                );
+                coursesListView.setAdapter(adapter);
+            });
+        });
     }
 }
