@@ -11,45 +11,39 @@ import com.example.classroomannouncement.Database.Entities.Course;
 import java.util.List;
 
 /**
- * Data Access Object (DAO) for interacting with the "courses" table in the database.
- * This interface defines all the database operations related to courses.
+ * DAO for the Course entity stored in table "courses".
  */
 @Dao
 public interface CourseDAO {
 
-    /**
-     * Inserts a new course into the "courses" table.
-     * @param course The course object to be inserted.
-     */
+    /** Insert a single course; returns new rowId */
     @Insert
-    void insert(Course course);
+    long insert(Course c);
 
-    /**
-     * Updates an existing course in the "courses" table.
-     * @param course The course object containing updated information.
-     */
+    /** Update a single course; returns rows updated */
     @Update
-    void update(Course course);
+    int update(Course c);
 
-    /**
-     * Deletes a specific course from the "courses" table.
-     * @param course The course object to be removed.
-     */
+    /** Delete a single course; returns rows deleted */
     @Delete
-    void delete(Course course);
+    int delete(Course c);
 
     /**
-     * Retrieves all courses from the "courses" table.
-     * @return A list of all Course objects.
+     * Used by the APP UI (matches CourseActivity):
+     * returns all courses synchronously.
      */
     @Query("SELECT * FROM courses")
-    List<Course> getAllCourses();
+    List<Course> getAllCourses();          // <-- CourseActivity uses this
 
     /**
-     * Retrieves a course by its name.
-     * @param courseName The name of the course to retrieve.
-     * @return The Course object if found, otherwise null.
+     * Used by tests (if you kept earlier test naming).
+     * You can keep or remove this if not needed.
      */
-    @Query("SELECT * FROM courses WHERE courseName = :courseName LIMIT 1")
-    Course getCourseByName(String courseName);
+    @Query("SELECT * FROM courses")
+    List<Course> getAllCoursesSync();
+
+    /** Helper used by tests */
+    @Query("SELECT * FROM courses WHERE courseName = :name LIMIT 1")
+    Course getCourseByName(String name);
+
 }

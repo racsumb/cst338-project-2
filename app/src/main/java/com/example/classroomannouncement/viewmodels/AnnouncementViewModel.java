@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import com.example.classroomannouncement.Database.Entities.Announcement;
-import com.example.classroomannouncement.Database.AnnouncementRepository;
+import com.example.classroomannouncement.Database.Repo.AnnouncementRepository;
 import java.util.List;
 
 public class AnnouncementViewModel extends AndroidViewModel {

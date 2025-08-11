@@ -9,8 +9,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.classroomannouncement.Database.UserRepo;
+import com.example.classroomannouncement.Database.Repo.UserRepo;
 import com.example.classroomannouncement.Database.Entities.User;
+
+import java.util.regex.Pattern;
 
 public class SignupPage extends AppCompatActivity {
 
@@ -78,5 +80,27 @@ public class SignupPage extends AppCompatActivity {
             startActivity(new Intent(SignupPage.this, MainActivity.class));
             finish();
         });
+    }
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+
+    public static String validateSignupInput(String name, String email, String password, IUserRepo userRepo) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            return "Please fill all fields";
+        }
+
+        if (password.length() < 6) {
+            return "Password must be at least 6 characters";
+        }
+
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            return "Please enter a valid email";
+        }
+
+        if (userRepo.getUserByEmail(email) != null) {
+            return "Email already registered!";
+        }
+
+        return "Signup successful!";
     }
 }

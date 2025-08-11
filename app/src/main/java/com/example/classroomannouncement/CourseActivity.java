@@ -56,7 +56,7 @@ public class CourseActivity extends AppCompatActivity {
             String name = courseNameEditText.getText().toString().trim();
             if (!name.isEmpty()) {
                 databaseWriteExecutor.execute(() -> {
-                    db.courseDAO().insert(new Course(name));
+                    db.courseDao().insert(new Course(name));
                     runOnUiThread(() -> {
                         courseNameEditText.setText("");
                         Toast.makeText(CourseActivity.this, "Course added!", Toast.LENGTH_SHORT).show();
@@ -72,7 +72,7 @@ public class CourseActivity extends AppCompatActivity {
     // Load all courses from the DB and show in ListView
     private void loadCourses() {
         databaseWriteExecutor.execute(() -> {
-            List<Course> courses = db.courseDAO().getAllCourses();
+            List<Course> courses = db.courseDao().getAllCourses();
             List<String> courseNames = courses.stream()
                     .map(course -> course.courseName)
                     .collect(Collectors.toList());

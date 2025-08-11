@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 // Import your Room entities and repository
 import com.example.classroomannouncement.Database.Entities.User;
-import com.example.classroomannouncement.Database.UserRepo;
+import com.example.classroomannouncement.Database.Repo.UserRepo;
 
 public class SettingsPage extends AppCompatActivity {
 

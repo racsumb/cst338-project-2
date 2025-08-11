@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.classroomannouncement.Database.Entities.Announcement;
-import com.example.classroomannouncement.Database.AnnouncementRepository;
+import com.example.classroomannouncement.Database.Repo.AnnouncementRepository;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 

@@ -1,4 +1,4 @@
-package com.example.classroomannouncement.adapters;
+package adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,8 +47,12 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
 
         // Set announcement data
         holder.titleTextView.setText(announcement.getTitle());
-        holder.contentTextView.setText(announcement.getContent());
-        holder.dateTextView.setText(announcement.getFormattedDate());
+        holder.contentTextView.setText(announcement.getBody());
+        holder.dateTextView.setText(
+                java.text.DateFormat.getDateTimeInstance(
+                        java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT
+                ).format(new java.util.Date(announcement.getCreatedAt()))
+        );
 
         // Show delete button only for admin
         if (holder.deleteButton != null) {
