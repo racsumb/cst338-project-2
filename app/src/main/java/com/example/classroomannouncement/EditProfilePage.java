@@ -1,6 +1,7 @@
 package com.example.classroomannouncement;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,6 +24,18 @@ public class EditProfilePage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d("EditProfilePage", "onCreate called");
+
+        String userEmail = getIntent().getStringExtra("userEmail");
+        if (userEmail == null) {
+            Log.e("EditProfilePage", "No user email provided");
+            Toast.makeText(this, "Error: No user email provided", Toast.LENGTH_SHORT).show();
+            finish(); // Close the activity if no email is passed
+            return;
+        }
+        Log.d("EditProfilePage", "Received email: " + userEmail);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile); // Connect layout XML file
 
@@ -35,11 +48,13 @@ public class EditProfilePage extends AppCompatActivity {
         userRepo = new UserRepo(this);
 
         // Get user data passed from SettingsPage
-        currentUser = (User) getIntent().getSerializableExtra("user");
+       // String userEmail = getIntent().getStringExtra("userEmail");
+        currentUser = userRepo.getUserByEmail(userEmail);
 
         // Fill the input boxes with current values
-        nameEditText.setText(currentUser.fullName);
-        passwordEditText.setText(currentUser.password);
+        nameEditText.setText(currentUser.getName());
+        passwordEditText.setText(currentUser.getPassword());
+
 
         // Save updated info when button is clicked
         saveButton.setOnClickListener(v -> {
@@ -52,8 +67,9 @@ public class EditProfilePage extends AppCompatActivity {
             }
 
             // Update user object
-            currentUser.fullName = newName;
-            currentUser.password = newPassword;
+            currentUser.setName(newName);
+            currentUser.setPassword(newPassword);
+
 
             // Save changes to database
             userRepo.updateUser(currentUser);

@@ -24,6 +24,9 @@
             android:name=".SettingsPage"
             android:exported="false" />
         <activity
+            android:name=".EditProfilePage" />
+
+        <activity
             android:name=".LandingPage"
             android:exported="false" />
         <activity
