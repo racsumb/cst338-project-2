@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.classroomannouncement.Database.UserRepo;
+import com.example.classroomannouncement.Database.Repo.UserRepo;
 import com.example.classroomannouncement.Database.Entities.User;
 
 /**
@@ -84,16 +84,18 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent;
 
-                if (user.isAdmin) {
+                if (user.isAdmin()) {
                     // Admins go to LandingPage
                     intent = new Intent(MainActivity.this, LandingPage.class);
                     intent.putExtra("isAdmin", true);
                     intent.putExtra("roleLabel", "Admin");
+                    intent.putExtra("userEmail", user.getEmail()); // ✅ ADD: pass the email forward
                 } else {
                     // Regular users go to StudentHomePage
                     intent = new Intent(MainActivity.this, StudentHomePage.class);
                     intent.putExtra("isAdmin", false);
                     intent.putExtra("roleLabel", "Student");
+                    intent.putExtra("userEmail", user.getEmail()); // ✅ ADD: pass the email forward
                 }
 
                 // Step 5: Start the new screen
