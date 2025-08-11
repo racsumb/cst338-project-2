@@ -53,4 +53,17 @@ public class User {
         return fullName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setName(String name) {
+        this.fullName = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 }

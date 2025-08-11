@@ -51,6 +51,9 @@ public class LandingPage extends AppCompatActivity {
             return insets;
         });
 
+        String currentUserEmail = getIntent().getStringExtra("userEmail");
+
+
         // Get user role from intent
         isAdmin = getIntent().getBooleanExtra("isAdmin", false);
 
@@ -118,9 +121,11 @@ public class LandingPage extends AppCompatActivity {
         ImageButton settingsButton = findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(v -> {
             Intent intent = new Intent(LandingPage.this, SettingsPage.class);
+            intent.putExtra("userEmail", currentUserEmail); // ✅ Add this line
             intent.putExtra("isAdmin", isAdmin);
             startActivity(intent);
         });
+
 
 
     }
