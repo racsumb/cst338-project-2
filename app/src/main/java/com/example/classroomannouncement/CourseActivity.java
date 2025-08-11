@@ -44,7 +44,7 @@ public class CourseActivity extends AppCompatActivity {
         coursesListView = findViewById(R.id.coursesListView);
 
         db = Room.databaseBuilder(getApplicationContext(),
-                        UserDB.class, "UserDB")
+                        UserDB.class, "classroom_database")
                 .fallbackToDestructiveMigration()
                 .build();
 
