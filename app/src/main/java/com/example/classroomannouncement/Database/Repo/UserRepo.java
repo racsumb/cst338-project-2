@@ -1,4 +1,4 @@
-package com.example.classroomannouncement.Database;
+package com.example.classroomannouncement.Database.Repo;
 
 import android.content.Context;
 
@@ -8,6 +8,7 @@ import com.example.classroomannouncement.Database.Entities.User;
 import com.example.classroomannouncement.Database.DAOs.UserDAO;
 import com.example.classroomannouncement.Database.DAOs.CourseDAO;
 import com.example.classroomannouncement.Database.Entities.Course;
+import com.example.classroomannouncement.Database.UserDB;
 
 
 /**
