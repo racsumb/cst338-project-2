@@ -65,10 +65,15 @@ public class SettingsPage extends AppCompatActivity {
 
         // Set up click listener to navigate back to MainActivity
         backToMainButton.setOnClickListener(v -> {
-            Intent intent = new Intent(SettingsPage.this, MainActivity.class);
-            intent.putExtra("userEmail", currentUserEmail); // Pass user email back for continuity
+            boolean isAdmin = currentUser != null && currentUser.isAdmin();
+
+            Intent intent = new Intent(SettingsPage.this, LandingPage.class);
+            intent.putExtra("userEmail", currentUserEmail);
+            intent.putExtra("isAdmin", isAdmin);
             startActivity(intent);
+
         });
+
     }
 
 }
