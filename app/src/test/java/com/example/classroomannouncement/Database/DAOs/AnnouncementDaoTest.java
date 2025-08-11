@@ -1,120 +1,119 @@
-package com.example.classroomannouncement.Database.DAOs;
+package com.example.classroomannouncement.Database;
 
 import static org.junit.Assert.*;
 
 import android.content.Context;
 
 import androidx.room.Room;
-import androidx.test.core.app.ApplicationProvider;
 
+import com.example.classroomannouncement.Database.DAOs.AnnouncementDao;
 import com.example.classroomannouncement.Database.Entities.Announcement;
-import com.example.classroomannouncement.Database.UserDB;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.List;
 
 /**
- * Three independent tests for the announcements table:
- * 1) insert
- * 2) update
- * 3) delete
- *
- * Uses an in-memory Room DB (no emulator, no disk IO).
- * Sticks to your existing DAO methods and entity getters/setters.
+ * Simple, separate tests for insert, update, and delete on the Announcement table.
+ * Runs entirely on the JVM using Robolectric, so no emulator or device is needed.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class AnnouncementDaoTest {
 
-    private UserDB db;            // in-memory database instance used only for tests
-    private AnnouncementDao dao;  // DAO under test
+    // In-memory database so changes are not persisted to disk
+    private UserDB db;
+
+    // Data Access Object (DAO) for the Announcement table
+    private AnnouncementDao announcementDao;
 
     @Before
     public void setUp() {
-        // Get a test Context from Robolectric
-        Context ctx = ApplicationProvider.getApplicationContext();
+        // Get a plain Context from Robolectric
+        Context ctx = RuntimeEnvironment.getApplication();
 
-        // Build an in-memory database (safe for unit tests)
+        // Build an in-memory Room database for testing
         db = Room.inMemoryDatabaseBuilder(ctx, UserDB.class)
-                .allowMainThreadQueries() // fine for tests
+                .allowMainThreadQueries() // main thread OK for tests
                 .build();
 
-        // Grab the DAO from the test DB
-        dao = db.announcementDao();
+        // Get the DAO we will be testing
+        announcementDao = db.announcementDao();
     }
 
     @After
     public void tearDown() {
-        // Always close the DB after each test to free resources
+        // Close the database after each test
         db.close();
     }
 
-    /**
-     * INSERT: Insert one announcement and verify it exists.
-     */
     @Test
-    public void insert_insertsAnnouncement() {
+    public void insert_insertsOneRow() {
+        // Create an announcement row
         long now = System.currentTimeMillis();
-
-        // Insert
         Announcement a = new Announcement("Welcome", "Class starts Monday!", now);
-        dao.insert(a);
 
-        // Verify
-        List<Announcement> all = dao.getAllAnnouncementsSync();
+        // Insert the announcement
+        announcementDao.insert(a);
+
+        // Get all announcements back from the DB
+        List<Announcement> all = announcementDao.getAllAnnouncementsSync();
+
+        // Verify there is exactly one announcement
         assertEquals(1, all.size());
+
+        // Verify the title and body match what we inserted
         Announcement saved = all.get(0);
         assertEquals("Welcome", saved.getTitle());
         assertEquals("Class starts Monday!", saved.getBody());
     }
 
-    /**
-     * UPDATE: Insert, modify title/body, call update(), verify changes persisted.
-     */
     @Test
-    public void update_updatesAnnouncementFields() {
+    public void update_updatesRow() {
+        // Insert an initial announcement
         long now = System.currentTimeMillis();
-
-        // Arrange: insert one row first
         Announcement a = new Announcement("Welcome", "Class starts Monday!", now);
-        dao.insert(a);
+        announcementDao.insert(a);
 
-        // Act: update fields and persist
-        List<Announcement> before = dao.getAllAnnouncementsSync();
-        Announcement toUpdate = before.get(0);
+        // Get the saved announcement from the DB
+        Announcement toUpdate = announcementDao.getAllAnnouncementsSync().get(0);
+
+        // Change its title and body
         toUpdate.setTitle("Updated Title");
         toUpdate.setBody("Class starts Tuesday!");
-        dao.update(toUpdate);
 
-        // Assert: read back and confirm
-        List<Announcement> after = dao.getAllAnnouncementsSync();
+        // Update the row in the database
+        announcementDao.update(toUpdate);
+
+        // Fetch all announcements again
+        List<Announcement> after = announcementDao.getAllAnnouncementsSync();
+
+        // Verify the changes took effect
         assertEquals(1, after.size());
         assertEquals("Updated Title", after.get(0).getTitle());
         assertEquals("Class starts Tuesday!", after.get(0).getBody());
     }
 
-    /**
-     * DELETE: Insert, delete the same row, verify the table is empty.
-     */
     @Test
-    public void delete_deletesAnnouncement() {
+    public void delete_removesRow() {
+        // Insert a row we plan to delete
         long now = System.currentTimeMillis();
+        Announcement a = new Announcement("ToRemove", "Body", now);
+        announcementDao.insert(a);
 
-        // Arrange: insert one row first
-        Announcement a = new Announcement("Welcome", "Class starts Monday!", now);
-        dao.insert(a);
+        // Get the saved announcement
+        Announcement saved = announcementDao.getAllAnnouncementsSync().get(0);
 
-        // Act: delete it
-        Announcement saved = dao.getAllAnnouncementsSync().get(0);
-        dao.delete(saved);
+        // Delete it
+        announcementDao.delete(saved);
 
-        // Assert: nothing remains
-        assertTrue(dao.getAllAnnouncementsSync().isEmpty());
+        // Verify the table is now empty
+        assertTrue(announcementDao.getAllAnnouncementsSync().isEmpty());
     }
 }

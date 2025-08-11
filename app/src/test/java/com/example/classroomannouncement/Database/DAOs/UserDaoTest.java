@@ -7,8 +7,8 @@ import android.content.Context;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
-import com.example.classroomannouncement.Database.UserDB;
 import com.example.classroomannouncement.Database.Entities.User;
+import com.example.classroomannouncement.Database.UserDB;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,90 +18,62 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
- * UserDAO tests: one test each for insert, update, and delete.
- * Uses an in-memory Room DB so nothing is written to disk.
+ * Unit tests for UserDAO using an in-memory Room database.
+ * Verifies insert, update, and delete operations.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class UserDaoTest {
 
-    // In-memory database reference
     private UserDB db;
-
-    // DAO we are testing
-    private UserDAO userDao;
+    private UserDAO userDAO;
 
     @Before
     public void setUp() {
-        // Get a Context from Robolectric (no emulator needed)
         Context ctx = ApplicationProvider.getApplicationContext();
-
-        // Build an in-memory database instance for tests
         db = Room.inMemoryDatabaseBuilder(ctx, UserDB.class)
-                .allowMainThreadQueries()  // OK for tests
+                .allowMainThreadQueries()  // fine for tests
                 .build();
-
-        // Grab the DAO
-        userDao = db.userDao();
+        userDAO = db.userDao();
     }
 
     @After
     public void tearDown() {
-        // Close the database after each test
         db.close();
     }
 
-    /**
-     * INSERT test:
-     * Insert a user and verify we can fetch it by email.
-     */
     @Test
-    public void insert_insertsUser() {
-        User u = new User("Alice", "alice@example.com", "secret123", false);
-        userDao.insert(u);
+    public void insert_and_getByEmail_returnsUser() {
+        User u = new User("Alice", "alice@example.com", "pw12345", false);
+        userDAO.insert(u);
 
-        User fromDb = userDao.getUserByEmail("alice@example.com");
-        assertNotNull("User should be found after insert", fromDb);
+        User fromDb = userDAO.getUserByEmail("alice@example.com");
+        assertNotNull(fromDb);
+        assertEquals("Alice", fromDb.fullName);
+        assertEquals("alice@example.com", fromDb.email);
     }
 
-    /**
-     * UPDATE test:
-     * Insert a user, update the password by email, verify login works with the new password.
-     */
     @Test
-    public void update_updatesPassword() {
-        // Insert
+    public void updatePassword_changesRow() {
         User u = new User("Bob", "bob@example.com", "oldpass", false);
-        userDao.insert(u);
+        userDAO.insert(u);
 
-        // Update just the password
-        int rows = userDao.updatePassword("bob@example.com", "newpass");
-        assertEquals("Exactly one row should be updated", 1, rows);
+        int changed = userDAO.updatePassword("bob@example.com", "newpass");
+        assertEquals(1, changed);
 
-        // Verify old password no longer works, new one does
-        assertNull("Old password should not match",
-                userDao.getUser("bob@example.com", "oldpass"));
-
-        assertNotNull("New password should match",
-                userDao.getUser("bob@example.com", "newpass"));
+        // now login should succeed with new password and fail with old
+        assertNull(userDAO.getUser("bob@example.com", "oldpass"));
+        assertNotNull(userDAO.getUser("bob@example.com", "newpass"));
     }
 
-    /**
-     * DELETE test:
-     * Insert a user, delete by email, verify it no longer exists.
-     */
     @Test
-    public void delete_deletesUserByEmail() {
-        // Insert
-        User u = new User("Cara", "cara@example.com", "pw123456", false);
-        userDao.insert(u);
+    public void deleteByEmail_removesRow() {
+        User u = new User("Carol", "carol@example.com", "secret", false);
+        userDAO.insert(u);
 
-        // Delete
-        int rows = userDao.deleteByEmail("cara@example.com");
-        assertEquals("Exactly one row should be deleted", 1, rows);
+        int removed = userDAO.deleteByEmail("carol@example.com");
+        assertEquals(1, removed);
 
-        // Verify gone
-        assertNull("User should not be found after delete",
-                userDao.getUserByEmail("cara@example.com"));
+        assertNull(userDAO.getUserByEmail("carol@example.com"));
     }
 }
