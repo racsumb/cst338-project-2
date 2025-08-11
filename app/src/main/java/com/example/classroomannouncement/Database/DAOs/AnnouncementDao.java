@@ -1,45 +1,50 @@
 package com.example.classroomannouncement.Database.DAOs;
 
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;    // <- NEW import
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update; // ✅ Needed for update
+import androidx.room.Update;
 
 import com.example.classroomannouncement.Database.Entities.Announcement;
+
 import java.util.List;
 
+/**
+ * DAO for the "announcements" table.
+ * Includes both LiveData (for app UI) and synchronous methods (for unit tests).
+ */
 @Dao
 public interface AnnouncementDao {
 
-    /**
-     * Get all announcements sorted by creation date (newest first).
-     */
-    @Query("SELECT * FROM announcements ORDER BY createdAt DESC")
-    LiveData<List<Announcement>> getAllAnnouncements();
-
-    /**
-     * Get a single announcement by its ID.
-     */
-    @Query("SELECT * FROM announcements WHERE id = :id")
-    LiveData<Announcement> getAnnouncementById(int id);
-
-    /**
-     * Insert a new announcement into the database.
-     */
+    // ----- Mutations -----
     @Insert
-    void insert(Announcement announcement);
+    long insert(Announcement a);
 
-    /**
-     * Delete an existing announcement from the database.
-     */
-    @Delete
-    void delete(Announcement announcement);
-
-    /**
-     * Update an existing announcement in the database.
-     */
     @Update
-    void update(Announcement announcement); // ✅ Added
+    int update(Announcement a);
+
+    @Delete
+    int delete(Announcement a);
+
+    // ----- Queries used by the APP (LiveData) -----
+
+    /** Live list for UI/repository */
+    @Query("SELECT * FROM announcements ORDER BY createdAt DESC")
+    LiveData<List<Announcement>> getAllAnnouncements();     // <-- matches repository call
+
+    /** Live single row by id for UI/repository */
+    @Query("SELECT * FROM announcements WHERE id = :id LIMIT 1")
+    LiveData<Announcement> getAnnouncementById(int id);     // <-- matches repository call
+
+    // ----- Queries used by TESTS (sync) -----
+
+    /** Synchronous list for unit tests */
+    @Query("SELECT * FROM announcements")
+    List<Announcement> getAllAnnouncementsSync();
+
+    /** Handy sync lookup by title for tests */
+    @Query("SELECT * FROM announcements WHERE title = :title LIMIT 1")
+    Announcement getByTitle(String title);
 }

@@ -1,40 +1,34 @@
-package com.example.classroomannouncement.Database;
+// UserDB.java  (REPLACE your file with this version)
 
-import com.example.classroomannouncement.Database.DAOs.CourseDAO;
-import com.example.classroomannouncement.Database.DAOs.UserDAO;
-import com.example.classroomannouncement.Database.Entities.Course;
-import com.example.classroomannouncement.Database.Entities.User;
+package com.example.classroomannouncement.Database;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;   // <-- add this import
+
+import com.example.classroomannouncement.Database.DAOs.AnnouncementDao;
+import com.example.classroomannouncement.Database.DAOs.CourseDAO;
+import com.example.classroomannouncement.Database.DAOs.UserDAO;
+import com.example.classroomannouncement.Database.Entities.Announcement;
+import com.example.classroomannouncement.Database.Entities.Course;
+import com.example.classroomannouncement.Database.Entities.User;
 
 /**
- * This class is like the main database file.
- *
- * 1. We tell Room which tables (entities) our database will have.
- * 2. Room will build the database using this information.
- * 3. Other parts of our app will talk to the database through this class.
+ * This is the ONE database for the whole app.
+ * It includes all tables and the type converters we need.
  */
 @Database(
-        // add both user and course class to entities list
-        entities = {User.class, Course.class},
-        version = 2
+        entities = { User.class, Course.class, Announcement.class }, // all tables here
+        version = 7,               // bump when schema changes (pick a new number)
+        exportSchema = false
 )
+@TypeConverters({ Converters.class })  // <-- we moved converters here from AppDatabase
 public abstract class UserDB extends RoomDatabase {
 
-    /**
-     * This is how we get access to the UserDAO (the list of commands for the User table).
-     *
-     * Example:
-     * AppDatabase.database.userDao().insert(newUser)
-     */
+    // These are the "doors" to each table in the database.
     public abstract UserDAO userDao();
-
-    /**
-     * This is how we get access to the CourseDAO (the list of commands for the Course table).
-     *
-     * Example:
-     * AppDatabase.database.courseDao().insert(newCourse)
-     */
-    public abstract CourseDAO courseDAO();
+    public abstract CourseDAO courseDao();
+    public abstract AnnouncementDao announcementDao();
 }
+
+
