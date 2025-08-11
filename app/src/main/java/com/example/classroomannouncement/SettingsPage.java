@@ -3,6 +3,7 @@ package com.example.classroomannouncement;
 // Import necessary Android and Java classes
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,8 @@ public class SettingsPage extends AppCompatActivity {
 
         // Retrieve the current user's email passed in via Intent
         currentUserEmail = getIntent().getStringExtra("userEmail");
+        Log.d("SettingsPage", "Received email: " + currentUserEmail);
+
 
         // Initialize the repository to access user data from Room
         userRepo = new UserRepo(this);
