@@ -95,4 +95,15 @@ public class SettingsPage extends AppCompatActivity {
 
     }
 
+    // Functions to support unit tests
+    public static String getWelcomeMessage(String name) {
+        return (name != null && !name.isEmpty())
+                ? "Welcome, " + name
+                : "Welcome, User";
+    }
+    public static String getRoleLabel(boolean isAdmin) {
+        return isAdmin ? "Admin" : "Student";
+    }
+
+
 }

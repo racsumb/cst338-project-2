@@ -81,4 +81,13 @@ public class EditProfilePage extends AppCompatActivity {
             finish(); // Close and return to SettingsPage
         });
     }
+
+    // Utility methods for unit tests
+    public static boolean isValidName(String name) {
+        return name != null && !name.trim().isEmpty();
+    }
+    public static boolean isPasswordChangeAllowed(String oldPassword, String newPassword) {
+        return oldPassword != null && newPassword != null && !newPassword.equals(oldPassword);
+    }
+
 }
