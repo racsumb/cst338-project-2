@@ -1,5 +1,6 @@
 package com.example.classroomannouncement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.classroomannouncement.Database.Entities.Announcement;
+import com.example.classroomannouncement.Database.Entities.User;
 import com.example.classroomannouncement.Database.Repo.AnnouncementRepository;
+import com.example.classroomannouncement.Database.Repo.UserRepo;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -18,6 +21,9 @@ public class CreateAnnouncementPage extends AppCompatActivity {
     private TextInputEditText announcementTitleInput;
     private TextInputEditText announcementBodyInput;
     private AnnouncementRepository announcementRepository;
+    private UserRepo userRepo;
+    private String currentUserEmail;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,11 @@ public class CreateAnnouncementPage extends AppCompatActivity {
 
         // Initialize the repository
         announcementRepository = new AnnouncementRepository(getApplication());
+        userRepo = new UserRepo(this);
+        // Retrieve the current user's email passed in via Intent
+        currentUserEmail = getIntent().getStringExtra("userEmail");
+        // Get the current user to check their role
+        currentUser = userRepo.getUserByEmail(currentUserEmail); // Initialize currentUser here
 
         // Initialize UI elements
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
@@ -34,7 +45,14 @@ public class CreateAnnouncementPage extends AppCompatActivity {
 
         // Set up the toolbar
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish()); // Handle back/close button click
+
+        toolbar.setNavigationOnClickListener(v -> {
+            Intent intent = new Intent(CreateAnnouncementPage.this, LandingPage.class);
+            intent.putExtra("isAdmin", true);
+            intent.putExtra("roleLabel", "Admin");
+            intent.putExtra("userEmail", currentUserEmail);
+            startActivity(intent);
+        });
     }
 
     // This method creates the "SAVE" button in the toolbar
@@ -64,7 +82,11 @@ public class CreateAnnouncementPage extends AppCompatActivity {
             Announcement announcement = new Announcement(title, content);
             announcementRepository.insert(announcement);
             Toast.makeText(this, "Announcement Posted!", Toast.LENGTH_SHORT).show();
-            finish();
+            Intent intent = new Intent(CreateAnnouncementPage.this, LandingPage.class);
+            intent.putExtra("isAdmin", true);
+            intent.putExtra("roleLabel", "Admin");
+            intent.putExtra("userEmail", currentUserEmail);
+            startActivity(intent);
         }
     }
 }

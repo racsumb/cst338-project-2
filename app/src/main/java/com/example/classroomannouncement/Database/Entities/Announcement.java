@@ -44,6 +44,9 @@ public class Announcement {
     }
 
     public Announcement(String title, String content) {
+        this.title = title;
+        this.body = content;
+        this.createdAt = new Date().getTime();
     }
 
     // ---- Standard getters/setters Room & UI can use ----
