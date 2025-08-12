@@ -112,6 +112,9 @@ public class LandingPage extends AppCompatActivity {
         FloatingActionButton createAnnouncementButton = findViewById(R.id.goToCreateAnnouncementButton);
         createAnnouncementButton.setOnClickListener(v -> {
             Intent intent = new Intent(LandingPage.this, CreateAnnouncementPage.class);
+            intent.putExtra("isAdmin", true);
+            intent.putExtra("roleLabel", "Admin");
+            intent.putExtra("userEmail", currentUserEmail);
             startActivity(intent);
         });
         createAnnouncementButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
@@ -120,6 +123,9 @@ public class LandingPage extends AppCompatActivity {
         FloatingActionButton createCourseButton = findViewById(R.id.goToCreateCourseButton);
         createCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(LandingPage.this, CourseActivity.class);
+            intent.putExtra("isAdmin", true);
+            intent.putExtra("roleLabel", "Admin");
+            intent.putExtra("userEmail", currentUserEmail);
             startActivity(intent);
         });
         createCourseButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
@@ -142,9 +148,6 @@ public class LandingPage extends AppCompatActivity {
             Intent intent = new Intent(this, EditProfilePage.class);
             intent.putExtra("userEmail", userEmail);
             startActivity(intent);        });
-
-
-
     }
 
     private void fetchQuote() {
