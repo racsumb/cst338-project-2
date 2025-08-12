@@ -12,7 +12,7 @@ import com.example.classroomannouncement.Database.Entities.User;
 import com.example.classroomannouncement.Database.Repo.UserRepo;
 
 /**
- * This screen lets the user update their profile info.
+ * This screen lets the user update their profile info....
  */
 public class EditProfilePage extends AppCompatActivity {
 
