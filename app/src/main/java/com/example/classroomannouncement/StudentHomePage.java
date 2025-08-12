@@ -25,7 +25,7 @@ public class StudentHomePage extends AppCompatActivity {
     public static final String EXTRA_FULL_NAME = "fullName";
     public static final String EXTRA_ROLE = "roleLabel";
     public static final String EXTRA_EMAIL = "userEmail";
-
+  
     private AnnouncementViewModel announcementViewModel;
     private AnnouncementAdapter announcementAdapter;
     private TextView welcomeText, roleText, quoteTextView;
@@ -55,6 +55,7 @@ public class StudentHomePage extends AppCompatActivity {
         // Intent extras
         String fullName = getIntent().getStringExtra(EXTRA_FULL_NAME);
         String role = getIntent().getStringExtra(EXTRA_ROLE);
+
         userEmail = getIntent().getStringExtra(EXTRA_EMAIL);
 
         if (fullName == null || fullName.isEmpty()) {

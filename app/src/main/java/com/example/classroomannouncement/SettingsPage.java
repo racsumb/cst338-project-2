@@ -72,6 +72,7 @@ public class SettingsPage extends AppCompatActivity {
 
             Intent intent;
 
+
             if (isAdmin) {
                 // If the user is an admin, go to LandingPage
                 intent = new Intent(SettingsPage.this, LandingPage.class);
@@ -89,7 +90,6 @@ public class SettingsPage extends AppCompatActivity {
 
             // Both pages need the user's email to function correctly
             intent.putExtra("userEmail", currentUserEmail);
-
             startActivity(intent);
         });
 

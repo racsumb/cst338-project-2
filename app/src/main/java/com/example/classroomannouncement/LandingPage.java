@@ -39,6 +39,10 @@ public class LandingPage extends AppCompatActivity {
     private boolean isAdmin;
     private TextView quoteTextView;
     private ZenQuoteApiService apiService;
+    private String userEmail;
+    public static final String EXTRA_USER_EMAIL = "userEmail";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,8 @@ public class LandingPage extends AppCompatActivity {
 
         // Get user role from intent
         isAdmin = getIntent().getBooleanExtra("isAdmin", false);
+        userEmail = getIntent().getStringExtra(EXTRA_USER_EMAIL);
+
 
         // RecyclerView setup
         RecyclerView announcementsRecyclerView = findViewById(R.id.announcementsRecyclerView);
@@ -122,14 +128,20 @@ public class LandingPage extends AppCompatActivity {
         FloatingActionButton refreshQuoteButton = findViewById(R.id.refreshQuoteButton);
         refreshQuoteButton.setOnClickListener(v -> fetchQuote());
 
+
         // Settings Button
         ImageButton settingsButton = findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(v -> {
-            Intent intent = new Intent(LandingPage.this, SettingsPage.class);
-            intent.putExtra("userEmail", currentUserEmail); // ✅ Add this line
-            intent.putExtra("isAdmin", isAdmin);
+            Intent intent = new Intent(this, SettingsPage.class);
+            intent.putExtra("userEmail", userEmail);
             startActivity(intent);
         });
+
+        ImageButton editProfileButton = findViewById(R.id.editProfileButton);
+        editProfileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EditProfilePage.class);
+            intent.putExtra("userEmail", userEmail);
+            startActivity(intent);        });
 
 
 
