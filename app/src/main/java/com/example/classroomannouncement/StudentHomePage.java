@@ -24,12 +24,13 @@ public class StudentHomePage extends AppCompatActivity {
 
     public static final String EXTRA_FULL_NAME = "fullName";
     public static final String EXTRA_ROLE = "roleLabel";
-    public static final String EXTRA_USER_EMAIL = "userEmail";
-
+    public static final String EXTRA_EMAIL = "userEmail";
+  
     private AnnouncementViewModel announcementViewModel;
     private AnnouncementAdapter announcementAdapter;
     private TextView welcomeText, roleText, quoteTextView;
     private String userEmail;
+
     private final String[] quotes = {
             "The beautiful thing about learning is that no one can take it away from you. – B.B. King",
             "Education is the passport to the future. – Malcolm X",
@@ -54,7 +55,8 @@ public class StudentHomePage extends AppCompatActivity {
         // Intent extras
         String fullName = getIntent().getStringExtra(EXTRA_FULL_NAME);
         String role = getIntent().getStringExtra(EXTRA_ROLE);
-        userEmail = getIntent().getStringExtra(EXTRA_USER_EMAIL);
+
+        userEmail = getIntent().getStringExtra(EXTRA_EMAIL);
 
         if (fullName == null || fullName.isEmpty()) {
             fullName = getString(R.string.default_student_name);
@@ -68,15 +70,22 @@ public class StudentHomePage extends AppCompatActivity {
 
         // Settings button
         settingsButton.setOnClickListener(v -> {
+            // Create the intent to open EditProfilePage
             Intent intent = new Intent(this, SettingsPage.class);
+            // Add the user's email as an extra
             intent.putExtra("userEmail", userEmail);
+            // Start the activity
             startActivity(intent);
         });
 
         editProfileButton.setOnClickListener(v -> {
+            // Create the intent to open EditProfilePage
             Intent intent = new Intent(this, EditProfilePage.class);
+            // Add the user's email as an extra
             intent.putExtra("userEmail", userEmail);
-            startActivity(intent);        });
+            // Start the activity
+            startActivity(intent);
+        });
 
         // Announcements
         announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
