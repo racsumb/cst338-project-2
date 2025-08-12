@@ -66,15 +66,31 @@ public class SettingsPage extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Set up click listener to navigate back to MainActivity
+        // Set up click listener to navigate back to the correct home page
         backToMainButton.setOnClickListener(v -> {
             boolean isAdmin = currentUser != null && currentUser.isAdmin();
 
-            Intent intent = new Intent(SettingsPage.this, LandingPage.class);
-            intent.putExtra("userEmail", currentUserEmail);
-            intent.putExtra("isAdmin", isAdmin);
-            startActivity(intent);
+            Intent intent;
 
+            if (isAdmin) {
+                // If the user is an admin, go to LandingPage
+                intent = new Intent(SettingsPage.this, LandingPage.class);
+                intent.putExtra("isAdmin", true); // Pass admin status
+                intent.putExtra("roleLabel", "Admin");
+            } else {
+                // If the user is a student, go to StudentHomePage
+                intent = new Intent(SettingsPage.this, StudentHomePage.class);
+                intent.putExtra("roleLabel", "Student");
+                // Pass the full name for the welcome message
+                if (currentUser != null) {
+                    intent.putExtra("fullName", currentUser.getName());
+                }
+            }
+
+            // Both pages need the user's email to function correctly
+            intent.putExtra("userEmail", currentUserEmail);
+
+            startActivity(intent);
         });
 
     }
