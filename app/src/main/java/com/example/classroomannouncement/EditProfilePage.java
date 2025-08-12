@@ -51,7 +51,7 @@ public class EditProfilePage extends AppCompatActivity {
         userRepo = new UserRepo(this);
 
         // Get user data passed from SettingsPage
-       // String userEmail = getIntent().getStringExtra("userEmail");
+        // String userEmail = getIntent().getStringExtra("userEmail");
         currentUser = userRepo.getUserByEmail(userEmail);
 
         // Fill the input boxes with current values
