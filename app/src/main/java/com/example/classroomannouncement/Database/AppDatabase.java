@@ -11,7 +11,7 @@ import com.example.classroomannouncement.Database.Entities.Announcement;
 
 @Database(
         entities = {Announcement.class},
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 @TypeConverters({Converters.class})

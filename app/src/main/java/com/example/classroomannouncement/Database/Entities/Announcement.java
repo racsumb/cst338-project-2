@@ -1,26 +1,26 @@
 package com.example.classroomannouncement.Database.Entities;
 
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 /**
- * Announcement entity stored in the Room table "announcements".
+ * Room entity for the "announcements" table.
+ *
  * Fields:
- *  - id: auto-generated row id
- *  - title: short headline
- *  - body: full text/content
- *  - createdAt: epoch millis when the announcement was created
+ *  - id         : auto-generated primary key
+ *  - title      : short headline shown in lists
+ *  - body       : full text shown on details page
+ *  - createdAt  : time saved (epoch millis) so we can sort newest first
  *
  * NOTE:
- *  - We provide a public no-arg constructor (required by Room).
- *  - We also provide two helper getters used by the UI:
- *      getContent() -> returns body  (so older code keeps working)
- *      getFormattedDate() -> returns a nicely formatted createdAt string
+ *  - Room requires a PUBLIC NO-ARG CONSTRUCTOR.
+ *  - We also provide a convenient (title, body) constructor that
+ *    auto-sets createdAt to "now" so new posts show at the top.
  */
 @Entity(tableName = "announcements")
 public class Announcement {
@@ -32,10 +32,18 @@ public class Announcement {
     private String body;
     private long createdAt;
 
-    /** Required by Room (public no-arg constructor). */
+    /** Required by Room (must exist and be public). */
     public Announcement() { }
 
-    /** Convenience constructor used by app/tests. */
+    /** App/tests helper: build with title + body; timestamp is now. */
+    @Ignore
+    public Announcement(String title, String body) {
+        this.title = title;                         // save the title
+        this.body = body;                           // save the body text
+        this.createdAt = System.currentTimeMillis();// set "now" for sorting/display
+    }
+
+    /** Optional: if you ever need a custom timestamp. */
     @Ignore
     public Announcement(String title, String body, long createdAt) {
         this.title = title;
@@ -43,17 +51,15 @@ public class Announcement {
         this.createdAt = createdAt;
     }
 
-    public Announcement(String title, String content) {
-    }
+    // ---- Standard getters/setters used by Room + UI ----
 
-    // ---- Standard getters/setters Room & UI can use ----
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    /** Full text of the announcement. */
+    /** Full text/content. */
     public String getBody() { return body; }
     public void setBody(String body) { this.body = body; }
 
@@ -61,17 +67,15 @@ public class Announcement {
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
 
-    // ---- Backward-compat helpers expected by your screens/adapters ----
+    // ---- Back-compat helpers some screens use ----
 
-    /** Some screens call getContent(); map it to the body field. */
-    public String getContent() {
-        return body;
-    }
+    /** Older code calls getContent(); map it to body. */
+    public String getContent() { return body; }
 
-    /** UI helper: format createdAt for display. */
+    /** Pretty date string for the UI. */
     public String getFormattedDate() {
         Date date = new Date(createdAt);
-        SimpleDateFormat fmt = new SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault());
-        return fmt.format(date);
+        return new SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault())
+                .format(date);
     }
 }

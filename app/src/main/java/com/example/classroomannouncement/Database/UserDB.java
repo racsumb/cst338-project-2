@@ -1,5 +1,3 @@
-// UserDB.java  (REPLACE your file with this version)
-
 package com.example.classroomannouncement.Database;
 
 import androidx.room.Database;

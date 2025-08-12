@@ -24,12 +24,10 @@ public class StudentHomePage extends AppCompatActivity {
 
     public static final String EXTRA_FULL_NAME = "fullName";
     public static final String EXTRA_ROLE = "roleLabel";
-    public static final String EXTRA_EMAIL = "userEmail";
-  
+
     private AnnouncementViewModel announcementViewModel;
     private AnnouncementAdapter announcementAdapter;
     private TextView welcomeText, roleText, quoteTextView;
-    private String userEmail;
 
     private final String[] quotes = {
             "The beautiful thing about learning is that no one can take it away from you. – B.B. King",
@@ -56,8 +54,6 @@ public class StudentHomePage extends AppCompatActivity {
         String fullName = getIntent().getStringExtra(EXTRA_FULL_NAME);
         String role = getIntent().getStringExtra(EXTRA_ROLE);
 
-        userEmail = getIntent().getStringExtra(EXTRA_EMAIL);
-
         if (fullName == null || fullName.isEmpty()) {
             fullName = getString(R.string.default_student_name);
         }
@@ -70,21 +66,11 @@ public class StudentHomePage extends AppCompatActivity {
 
         // Settings button
         settingsButton.setOnClickListener(v -> {
-            // Create the intent to open EditProfilePage
-            Intent intent = new Intent(this, SettingsPage.class);
-            // Add the user's email as an extra
-            intent.putExtra("userEmail", userEmail);
-            // Start the activity
-            startActivity(intent);
+            startActivity(new Intent(this, SettingsPage.class));
         });
 
         editProfileButton.setOnClickListener(v -> {
-            // Create the intent to open EditProfilePage
-            Intent intent = new Intent(this, EditProfilePage.class);
-            // Add the user's email as an extra
-            intent.putExtra("userEmail", userEmail);
-            // Start the activity
-            startActivity(intent);
+            startActivity(new Intent(this, EditProfilePage.class));
         });
 
         // Announcements

@@ -1,60 +1,67 @@
 package com.example.classroomannouncement.Database.Repo;
 
 import android.app.Application;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 
-import com.example.classroomannouncement.Database.UserDB;                   // use UserDB
 import com.example.classroomannouncement.Database.DAOs.AnnouncementDao;
 import com.example.classroomannouncement.Database.Entities.Announcement;
+import com.example.classroomannouncement.Database.UserDB;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Talks to the "announcements" table using the ONE shared database (UserDB).
+ * Repository used by the UI/ViewModels to read/write Announcements.
+ * IMPORTANT: Uses UserDB (the single database for the whole app).
  */
 public class AnnouncementRepository {
-    // The helper for the announcements table
-    private final AnnouncementDao announcementDao;
-    // Runs work off the main thread
-    private final ExecutorService executorService;
 
-    public AnnouncementRepository(Application application) {
-        // Open the same database file the rest of the app uses
+    // Door to the announcements table
+    private final AnnouncementDao dao;
+
+    // Simple background thread so inserts/deletes don't block the UI
+    private final ExecutorService io = Executors.newSingleThreadExecutor();
+
+    public AnnouncementRepository(Application app) {
+        // Build ONE Room database named "classroom_database"
+        // (this must match wherever else you open the DB)
         UserDB db = Room.databaseBuilder(
-                        application.getApplicationContext(),
+                        app.getApplicationContext(),
                         UserDB.class,
-                        "classroom_database"             // <-- same name
+                        "classroom_database"
                 )
-                .fallbackToDestructiveMigration()         // <-- same setting
+                .fallbackToDestructiveMigration() // ok for class projects
                 .build();
 
-        // Get the DAO from this shared database
-        this.announcementDao = db.announcementDao();
-
-        // One background thread for DB writes
-        this.executorService = Executors.newSingleThreadExecutor();
+        // Get the announcements DAO from that single DB
+        dao = db.announcementDao();
     }
 
-    /** Live list for the UI */
+    // Live list used by screens (Landing page etc.)
     public LiveData<List<Announcement>> getAllAnnouncements() {
-        return announcementDao.getAllAnnouncements();
+        return dao.getAllAnnouncements();
     }
 
-    /** Live single row by id */
+    // Live single row by id (detail screen)
     public LiveData<Announcement> getAnnouncementById(int id) {
-        return announcementDao.getAnnouncementById(id);
+        return dao.getAnnouncementById(id);
     }
 
-    /** Insert on background thread */
-    public void insert(Announcement announcement) {
-        executorService.execute(() -> announcementDao.insert(announcement));
+    // Insert on a background thread
+    public void insert(Announcement a) {
+        io.execute(() -> dao.insert(a));
     }
 
-    /** Delete on background thread */
-    public void delete(Announcement announcement) {
-        executorService.execute(() -> announcementDao.delete(announcement));
+    // Delete on a background thread
+    public void delete(Announcement a) {
+        io.execute(() -> dao.delete(a));
+    }
+
+    // Optional: update on a background thread
+    public void update(Announcement a) {
+        io.execute(() -> dao.update(a));
     }
 }
